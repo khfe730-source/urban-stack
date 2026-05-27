@@ -17,15 +17,15 @@
 **목표: 블록을 그리드에 배치하는 핵심 루프 동작**
 
 ### 구현 항목
-- [ ] `index.html` — Phaser CDN 로드, 기본 캔버스 설정
-- [ ] `src/config.js` — 그리드 크기, 블록 색상, 점수 상수 정의
-- [ ] `src/objects/Tetromino.js` — 7종 테트로미노 형태 정의
-- [ ] `src/objects/Grid.js` — 5×9 그리드 상태 관리, 배치 유효성 검사
-- [ ] `src/objects/CardDeck.js` — 덱 생성, 셔플, 뽑기 로직
-- [ ] `src/scenes/GameScene.js` — 기본 게임 루프 (카드 뽑기 → 열 선택 → 배치)
+- [x] `index.html` — Phaser CDN 로드, 기본 캔버스 설정
+- [x] `src/config.js` — 그리드 크기, 블록 색상, 점수 상수 정의
+- [x] `src/objects/Tetromino.js` — 7종 테트로미노 형태 정의
+- [x] `src/objects/Grid.js` — 5×9 그리드 상태 관리, 배치 유효성 검사
+- [x] `src/objects/CardDeck.js` — 덱 생성, 셔플, 뽑기 로직
+- [x] `src/scenes/GameScene.js` — 기본 게임 루프 (카드 뽑기 → 열 선택 → 배치)
 
 ### 완료 기준
-브라우저에서 블록을 열에 배치하고, 그리드에 쌓이는 것이 보임
+브라우저에서 블록을 열에 배치하고, 그리드에 쌓이는 것이 보임 ✅
 
 ---
 

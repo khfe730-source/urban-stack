@@ -67,8 +67,6 @@ python -m http.server 8000
 # → http://localhost:8000
 ```
 
-> ℹ️ Week 1 진행 중이라 현재 `main` 브랜치에는 아직 `index.html`이 없습니다. 작업 브랜치(`feature/week1-*`)에서 확인 가능합니다.
-
 ---
 
 ## 개발 로드맵
