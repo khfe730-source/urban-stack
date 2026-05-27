@@ -35,11 +35,11 @@
 ### 구현 항목
 - [x] `src/objects/ScoreBoard.js` — 라운드별 점수판 레이아웃 정의 (4종)
 - [x] 블록 회전·뒤집기 도입 — `Tetromino.rotate()`/`flip()`, GameScene 키바인딩 (↑/X, F)
-- [ ] `GameScene.js` 업데이트 — 라운드 시작/종료 로직
-- [ ] 점수 계산 로직 — 보너스 칸 덮기, 빈 칸 페널티
-- [ ] 라운드 결산 화면 — 라운드별 획득 점수 표시
-- [ ] 최종 결과 화면 — 총점 + 등급 표시
-- [ ] `src/scenes/UIScene.js` — 점수, 라운드, NEXT 블록 표시
+- [x] `GameScene.js` 업데이트 — 라운드 시작/종료 로직 (state machine: playing/roundResult/finalResult)
+- [x] 점수 계산 로직 — `ScoreBoard.calculateScore(grid)` GameScene에 통합
+- [x] 라운드 결산 화면 — 간이 텍스트 모달 (breakdown + 누적 총점) ※ 폴리싱은 후속 PR
+- [x] 최종 결과 화면 — 간이 텍스트 모달 (라운드별 점수 + 총점 + 등급) ※ 폴리싱은 후속 PR
+- [ ] `src/scenes/UIScene.js` — 점수, 라운드, NEXT 블록 표시 ※ 다음 PR에서 사이드 UI를 별도 씬으로 분리
 
 ### 완료 기준
 타이틀 없이도 4라운드 완주하고 최종 점수가 나옴
