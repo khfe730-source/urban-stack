@@ -1,6 +1,6 @@
-// Tetromino.js — 7종 테트로미노 정의 및 렌더링
+// Tetromino.js — 7종 테트로미노 정의, 회전/뒤집기, 렌더링
 // 좌표는 [col, row] 상대 좌표. (0, 0) = 블록의 좌측 상단 칸.
-// 회전은 사용하지 않음 (FITS 룰에 따라 고정된 형태 유지).
+// 회전(90° CW)과 가로 뒤집기 지원 — 원작 FITS와의 차이점.
 
 class Tetromino {
     // ===== 형태 정의 =====
@@ -42,6 +42,34 @@ class Tetromino {
     // 절대 그리드 좌표 반환: 블록의 (originCol, originRow)에 배치했을 때 차지하는 칸들
     occupiedCells(originCol, originRow) {
         return this.cells.map(([c, r]) => [originCol + c, originRow + r]);
+    }
+
+    // ===== 변환 (회전 / 뒤집기) =====
+
+    // 90° 시계방향 회전. cells in-place 변환.
+    // 공식: [c, r] → [h-1-r, c] (h = 변환 전 높이)
+    rotate() {
+        const h = this.height;
+        this.cells = this.cells.map(([c, r]) => [h - 1 - r, c]);
+        this.normalizeOrigin();
+        return this;
+    }
+
+    // 가로 뒤집기 (좌우 미러). cells in-place 변환.
+    // 공식: [c, r] → [w-1-c, r] (w = 변환 전 너비)
+    flip() {
+        const w = this.width;
+        this.cells = this.cells.map(([c, r]) => [w - 1 - c, r]);
+        this.normalizeOrigin();
+        return this;
+    }
+
+    // 변환 후 좌측 상단을 (0, 0)에 맞춰 정규화 (음수 좌표 방지 + 일관성)
+    normalizeOrigin() {
+        const minC = Math.min(...this.cells.map(([c]) => c));
+        const minR = Math.min(...this.cells.map(([, r]) => r));
+        if (minC === 0 && minR === 0) return;
+        this.cells = this.cells.map(([c, r]) => [c - minC, r - minR]);
     }
 
     // Phaser 씬에 픽셀 좌표로 렌더링. (originCol, originRow)는 그리드 셀 좌표.

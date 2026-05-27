@@ -115,6 +115,11 @@ class GameScene extends Phaser.Scene {
         switch (event.key) {
             case 'ArrowLeft': this.moveCurrent(-1); break;
             case 'ArrowRight': this.moveCurrent(1); break;
+            case 'ArrowUp':
+            case 'x':
+            case 'X': this.rotateCurrent(); break;
+            case 'f':
+            case 'F': this.flipCurrent(); break;
             case ' ':
             case 'Spacebar': this.dropAndPlace(); break;
             case 'r':
@@ -124,6 +129,18 @@ class GameScene extends Phaser.Scene {
 
     moveCurrent(delta) {
         this.currentCol += delta;
+        this.clampCurrentColToBounds();
+        this.redrawCurrent();
+    }
+
+    rotateCurrent() {
+        this.currentTetromino.rotate();
+        this.clampCurrentColToBounds(); // 회전으로 너비 변경 시 그리드 밖 보정
+        this.redrawCurrent();
+    }
+
+    flipCurrent() {
+        this.currentTetromino.flip();
         this.clampCurrentColToBounds();
         this.redrawCurrent();
     }
