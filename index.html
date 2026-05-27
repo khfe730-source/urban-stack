@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Stack</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a2e;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #phaser-game { line-height: 0; }
+        #hint {
+            color: #a0a0c0;
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="phaser-game"></div>
+    <div id="hint">
+        [1~7] 블록 종류 선택  ·  [← →] 열 이동  ·  [Space] 배치  ·  [R] 리셋
+    </div>
+
+    <!-- Phaser 3 (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+
+    <!-- 게임 코드 — 상수 → 오브젝트 → 씬 순서로 로드 -->
+    <script src="src/config.js"></script>
+    <script src="src/objects/Tetromino.js"></script>
+    <script src="src/objects/Grid.js"></script>
+
+    <!--
+      Week 1 검증용 임시 부팅 코드.
+      Grid.js + Tetromino.js + config.js가 함께 동작하는지 시각적으로 확인하기 위한 테스트 씬.
+      Week 2에서 src/scenes/ 아래로 정식 분리 예정 (BootScene, MenuScene, GameScene, UIScene).
+    -->
+    <script>
+        class TestScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'TestScene' });
+            }
+
+            create() {
+                this.drawHeader();
+
+                this.grid = new Grid();
+                this.grid.drawBackground(this);
+
+                this.currentTypeIndex = 0;
+                this.currentCol = 0;
+                this.spawnTetromino();
+
+                this.input.keyboard.on('keydown', this.handleKey, this);
+            }
+
+            drawHeader() {
+                this.add.text(
+                    CONFIG.GAME_WIDTH / 2,
+                    40,
+                    'URBAN STACK',
+                    {
+                        fontFamily: CONFIG.FONT_FAMILY,
+                        fontSize: '32px',
+                        color: CONFIG.TEXT_COLOR,
+                        fontStyle: 'bold'
+                    }
+                ).setOrigin(0.5);
+
+                this.add.text(
+                    CONFIG.GAME_WIDTH / 2,
+                    80,
+                    'Week 1 — Grid + Tetromino 검증',
+                    {
+                        fontFamily: CONFIG.FONT_FAMILY,
+                        fontSize: '14px',
+                        color: CONFIG.TEXT_COLOR_DIM
+                    }
+                ).setOrigin(0.5);
+            }
+
+            // 현재 활성 테트로미노를 새로 생성하고 그리드 상단에 그림
+            spawnTetromino() {
+                if (this.current) this.current.clearSprites();
+                const type = Tetromino.TYPES[this.currentTypeIndex];
+                this.current = new Tetromino(type);
+                this.clampCurrentColToBounds();
+                this.current.render(this, this.currentCol, 0);
+            }
+
+            // 좌우 이동 후 또는 블록 변경 후 호출 — 그리드 밖으로 나가지 않게 보정
+            clampCurrentColToBounds() {
+                const maxCol = CONFIG.GRID_COLS - this.current.width;
+                if (this.currentCol < 0) this.currentCol = 0;
+                if (this.currentCol > maxCol) this.currentCol = maxCol;
+            }
+
+            redrawCurrent() {
+                this.current.clearSprites();
+                this.current.render(this, this.currentCol, 0);
+            }
+
+            handleKey(event) {
+                const k = event.key;
+                if (k >= '1' && k <= '7') {
+                    this.currentTypeIndex = parseInt(k, 10) - 1;
+                    this.spawnTetromino();
+                } else if (k === 'ArrowLeft') {
+                    this.moveCurrent(-1);
+                } else if (k === 'ArrowRight') {
+                    this.moveCurrent(1);
+                } else if (k === ' ' || k === 'Spacebar') {
+                    this.dropAndPlace();
+                } else if (k === 'r' || k === 'R') {
+                    this.resetGrid();
+                }
+            }
+
+            moveCurrent(delta) {
+                this.currentCol += delta;
+                this.clampCurrentColToBounds();
+                this.redrawCurrent();
+            }
+
+            dropAndPlace() {
+                const landing = this.grid.findLandingRow(this.current, this.currentCol);
+                if (landing === -1) return; // 배치 불가
+                this.grid.place(this.current, this.currentCol, landing);
+                this.current.clearSprites();
+                this.grid.drawPlacedBlocks(this);
+                this.spawnTetromino();
+            }
+
+            resetGrid() {
+                this.grid.reset();
+                this.spawnTetromino();
+            }
+        }
+
+        new Phaser.Game({
+            type: Phaser.AUTO,
+            width: CONFIG.GAME_WIDTH,
+            height: CONFIG.GAME_HEIGHT,
+            backgroundColor: CONFIG.BG_COLOR,
+            parent: 'phaser-game',
+            scene: [TestScene]
+        });
+    </script>
+</body>
+</html>
